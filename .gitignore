@@ -14,4 +14,4 @@ apps/nigeria/fixtures/message_counter.json
 *~
 \#*
 *.log*
-rapidsms.ini
+local.ini
