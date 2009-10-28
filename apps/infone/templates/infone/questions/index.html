@@ -1,0 +1,26 @@
+{% extends base_template %}
+{% block title %}INFONE Home{% endblock %}
+{% block content %}
+<h2>All Questions</h2>
+{% if success %}
+<p>Successfully created your question!</p>
+{% endif %} 
+<table width="100%"> 
+    <thead>
+        <tr>
+            <th>Question Text</th>
+            <th>Question Current?</th>
+            <th>Date Created</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for question in questions %}
+            <tr>
+                <td>{{question.text}}</td>
+                <td>{% if question.current %}YES{% else %}NO{% endif  %}</td>
+                <td>{{question.created_at|date:"d-M-Y H:m:s"}}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

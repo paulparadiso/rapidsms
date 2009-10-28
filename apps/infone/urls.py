@@ -7,5 +7,7 @@ import infone.views as views
 
 urlpatterns = patterns('',
     url(r'^infone/respondants/?$', views.respondants_index),
-    url(r'^infone/?$', views.app_index)
+    url(r'^infone/?$', views.app_index),
+    url(r'^infone/questions/new?$', views.new_question),
+    url(r'^infone/questions/?$', views.create_question)
 )

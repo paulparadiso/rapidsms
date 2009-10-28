@@ -1,0 +1,9 @@
+{% extends base_template %}
+{% block title %}INFONE Home{% endblock %}
+{% block content %}
+<h2>New Question</h2> 
+<form action="/infone/questions" method="POST">
+{{ form.as_p }}
+<input type="submit" value="Submit" />
+</form>
+{% endblock %}
