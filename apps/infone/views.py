@@ -31,9 +31,11 @@ def create_question(req):
         if form.is_valid():
             question = Question(
             text=form.cleaned_data['text'],
-            current=form.cleaned_data['current'],
             created_at=datetime.now())
             question.save()
+                        
+            if form.cleaned_data['current'] == 1:
+                Question.make_current(question)
             
             success = True
             
