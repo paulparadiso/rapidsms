@@ -1,6 +1,7 @@
 {% extends base_template %}
 {% block title %}INFONE Home{% endblock %}
 {% block content %}
+<p><a href="/infone/questions/new">Make a new question</a></p>
 <h2>All Questions</h2>
 {% if success %}
 <p>Successfully created your question!</p>
@@ -8,6 +9,7 @@
 <table width="100%"> 
     <thead>
         <tr>
+            <th></th>
             <th></th>
             <th>Question Text</th>
             <th>Question Current?</th>
@@ -18,7 +20,7 @@
         {% for question in questions %}
             <tr {% if question.current %}style="background-color: #E0FFB8; font-weight:bold"{% endif  %} >
                             <td><a href="/infone/questions/{{question.id}}/edit">edit</edit></td>
-
+                <td><a href="/infone/questions/{{question.id}}">results</a></td>
                 <td>{{question.text}}</td>
                 <td>{% if question.current %}YES{% else %}NO{% endif  %}</td>
                 <td>{{question.created_at|date:"d-M-Y H:m:s"}}</td>

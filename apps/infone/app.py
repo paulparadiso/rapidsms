@@ -11,19 +11,48 @@ class App (rapidsms.app.App):
         """Parse and annotate messages in the parse phase."""
         pass
 
-    def handle (self, message):
-        """Register the respondant if the number is new."""            
-        exists = Respondant.objects.filter(phone_number=message.connection.identity)
+    def register(something_stupid, potential_registrant, message):
+      """helper for registering the respondant if necessary. returns a saved respondant"""  
         
-        if exists:
-            message.respond("We've already got your number. You're good.")
-        else:
-            resp = Respondant(
-            phone_number=message.connection.identity,
-            registered_at=datetime.now())
-            resp.save()
-            message.respond("Thanks for registering! Your infone ID is: %d" % resp.id)
+      if potential_registrant:
+          return potential_registrant[0]
+      else:
+          resp = Respondant(
+          phone_number=message.connection.identity,
+          registered_at=datetime.now())
+          resp.save()
+          return resp
+      
+    def handle (self, message):
+        """Register the respondant if the number is new."""
 
+        potential_respondant = Respondant.objects.filter(phone_number=message.connection.identity)
+        respondant = self.register(potential_respondant, message)
+        
+        current_question = Question.objects.filter(current=1)
+
+        if current_question:
+            resp = Response(
+            question=current_question[0],
+            respondant=respondant,
+            text=message.text,
+            created_at=datetime.now()
+            )
+            resp.save()
+            
+            if potential_respondant:
+                message.respond("Thanks for your reply! Your free minutes should arrive shortly.")
+            else:
+                message.respond("Thanks for your reply and for registering for Infone. Your free minutes should arrive shortly. Your Infone ID is: %d" % respondant.id)
+                
+        else:
+            if potential_respondant:
+                message.respond("You're already registered.")
+            else:
+                message.respond("Thanks for registering! Your Infone ID is: %d" % respondant.id)
+        
+        # Respondant.objects.all().delete()
+        
         pass
 
     def cleanup (self, message):

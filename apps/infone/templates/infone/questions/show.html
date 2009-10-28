@@ -1,0 +1,33 @@
+{% extends base_template %}
+{% block title %}INFONE Home{% endblock %}
+{% block content %}
+<h2>Question {{question.id}}</h2> 
+<p><b>Text</b>: {{question.text}}</p>
+<h3>Responses</h3>
+<table width="100%">
+  <thead>
+    <tr>
+      <th>Respondant</th>
+      <th>Response</th>
+      <th>Received At</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+
+  {% for response in responses %}
+    <tr>
+      <td>
+        {{response.respondant.phone_number}}
+      </td>
+      <td>
+        {{response.text}}
+      </td>
+      <td>
+        {{response.created_at}}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

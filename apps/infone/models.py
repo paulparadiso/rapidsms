@@ -19,3 +19,10 @@ class Question(models.Model):
     created_at = models.DateTimeField(null=True)
     current = models.BooleanField(null=False, default=False)
     
+class Response(models.Model):
+    question = models.ForeignKey(Question)
+    respondant = models.ForeignKey(Respondant)
+    text = models.CharField(max_length=160)
+    created_at = models.DateTimeField(null=True)
+    
+    # TODO: parsed_text? or something from method defined in question?

@@ -30,11 +30,10 @@ def edit_question(req, id):
     form = QuestionForm({'text' : question.text, 'current' : current})
     return render_to_response(req, template_path, {'question' : question, 'form' : form})
 
-def update_question(req, id):
-    template_path = "infone/questions/index.html"
-    
-    success = False
+def update_question(req, id):    
     if req.method == 'POST': # If the form has been submitted...
+        success = False
+        
         form = QuestionForm(req.POST) # A form bound to the POST data
         if form.is_valid():
             question = Question.objects.get(id=id)
@@ -49,8 +48,13 @@ def update_question(req, id):
             
         else:
             return HttpResponseRedirect('/infone/questions/' + question.id)
-        
-        # TODO: show page for the question
+            
+    else:   
+        template_path = "infone/questions/show.html"
+        question = Question.objects.get(id=id)
+        responses = question.response_set.all()
+        return render_to_response(req, template_path, {'question' : question, 'responses' : responses})
+       
     return HttpResponseRedirect('/infone/questions')
 
 def create_question(req):
