@@ -8,6 +8,7 @@
 <table width="100%"> 
     <thead>
         <tr>
+            <th></th>
             <th>Question Text</th>
             <th>Question Current?</th>
             <th>Date Created</th>
@@ -15,7 +16,9 @@
     </thead>
     <tbody>
         {% for question in questions %}
-            <tr>
+            <tr {% if question.current %}style="background-color: #E0FFB8; font-weight:bold"{% endif  %} >
+                            <td><a href="/infone/questions/{{question.id}}/edit">edit</edit></td>
+
                 <td>{{question.text}}</td>
                 <td>{% if question.current %}YES{% else %}NO{% endif  %}</td>
                 <td>{{question.created_at|date:"d-M-Y H:m:s"}}</td>
