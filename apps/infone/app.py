@@ -32,19 +32,22 @@ class App (rapidsms.app.App):
         current_question = Question.objects.filter(current=1)
 
         if current_question:
-            resp = Response(
-            question=current_question[0],
-            respondant=respondant,
-            text=message.text,
-            created_at=datetime.now()
-            )
-            resp.save()
+            if current_question[0].not_yet_answered_by(respondant):
+                resp = Response(
+                question=current_question[0],
+                respondant=respondant,
+                text=message.text,
+                created_at=datetime.now()
+                )
+                resp.save()
             
-            if potential_respondant:
-                message.respond("Thanks for your reply! Your free minutes should arrive shortly.")
+                if potential_respondant:
+                    message.respond("Thanks for your reply! Your free minutes should arrive shortly.")
+                else:
+                    message.respond("Thanks for your reply and for registering for Infone. Your free minutes should arrive shortly. Your Infone ID is: %d" % respondant.id)
             else:
-                message.respond("Thanks for your reply and for registering for Infone. Your free minutes should arrive shortly. Your Infone ID is: %d" % respondant.id)
-                
+                message.respond("We already got your answer to this question earlier, thanks.")
+                    
         else:
             if potential_respondant:
                 message.respond("You're already registered.")
@@ -52,6 +55,7 @@ class App (rapidsms.app.App):
                 message.respond("Thanks for registering! Your Infone ID is: %d" % respondant.id)
         
         # Respondant.objects.all().delete()
+        # Response.objects.all().delete()
         
         pass
 

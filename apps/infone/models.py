@@ -14,7 +14,10 @@ class Question(models.Model):
             
         question.current = True
         question.save()
-        
+    
+    def not_yet_answered_by(self, respondant):
+        return Response.objects.filter(question=self, respondant=respondant).count() == 0
+
     text = models.CharField(max_length=160)
     created_at = models.DateTimeField(null=True)
     current = models.BooleanField(null=False, default=False)
