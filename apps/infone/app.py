@@ -56,6 +56,8 @@ class App (rapidsms.app.App):
         
         # Respondant.objects.all().delete()
         # Response.objects.all().delete()
+        # Question.objects.all().delete()
+
         
         pass
 
