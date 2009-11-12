@@ -28,7 +28,7 @@ class App (rapidsms.app.App):
                 )
                 resp.save()
             
-                if potential_respondant:
+                if respondant.registered_at < before:
                     message.respond("Thanks for your reply! Your free minutes should arrive shortly.")
                 else:
                     message.respond("Thanks for your reply and for registering for Infone. Your free minutes should arrive shortly. Your Infone ID is: %d" % respondant.id)
@@ -42,8 +42,8 @@ class App (rapidsms.app.App):
                 message.respond("Thanks for registering! Your Infone ID is: %d" % respondant.id)
         
         # Respondant.objects.all().delete()
-        # Response.objects.all().delete()
-        # Question.objects.all().delete()
+        #         Response.objects.all().delete()
+        #         Question.objects.all().delete()
 
         
         pass

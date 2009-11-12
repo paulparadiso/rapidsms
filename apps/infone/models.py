@@ -23,7 +23,6 @@ class Respondant(models.Model):
             conn.reporter = reporter
             conn.save()
             conn.seen()
-
             
             resp = Respondant(
             phone_number=message.connection.identity,
@@ -43,9 +42,8 @@ class Question(models.Model):
             q.save()
             
         question.current = True
-        # TODO: Do Something Here to send message
-        # conn = Connection(self, backend, q.respondant.phone_number)
-        # conn.backend.message("5037849133", "hi").send()
+        # for respondant in Respondant.objects.all():
+            # respondant.connection.backend.message(respondant.phone_number, question.text).send()
 
         question.save()
     

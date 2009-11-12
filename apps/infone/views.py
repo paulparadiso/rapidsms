@@ -3,6 +3,9 @@ from models import *
 from datetime import datetime, timedelta
 from django import forms
 from django.http import HttpResponseRedirect
+from django.http import HttpResponse
+
+import csv
 
 class QuestionForm(forms.Form):
     text = forms.CharField(max_length=160, widget=forms.widgets.Textarea())
@@ -17,11 +20,34 @@ def app_index(req):
     template_path = "infone/index.html"
     return render_to_response(req, template_path, {})
 
+def question_csv(req, id):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = "attachment; filename=infone_response_q%s.csv" % id 
+
+    writer = csv.writer(response)
+    question = Question.objects.get(id=id)
+    responses = question.response_set.all()
+    writer.writerow(['Respondant', 'Response', 'Received At'])
+
+    for r in responses:
+        writer.writerow([r.respondant.phone_number, r.text, r.created_at])
+
+    return response
+
 def new_question(req):
     template_path = "infone/questions/new.html"
     form = QuestionForm()
     return render_to_response(req, template_path, {'form' : form})
 
+def edit_question(req, id):
+    template_path = "infone/questions/edit.html"
+    question = Question.objects.get(id=id)
+    # this is stupid but necessary:
+    current = True if question.current == 1 else False
+    form = QuestionForm({'text' : question.text, 'current' : current})
+    return render_to_response(req, template_path, {'question' : question, 'form' : form})
+    
 def edit_question(req, id):
     template_path = "infone/questions/edit.html"
     question = Question.objects.get(id=id)
