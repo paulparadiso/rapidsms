@@ -10,24 +10,11 @@ class App (rapidsms.app.App):
     def parse (self, message):
         """Parse and annotate messages in the parse phase."""
         pass
-
-    def register(something_stupid, potential_registrant, message):
-      """helper for registering the respondant if necessary. returns a saved respondant"""  
-        
-      if potential_registrant:
-          return potential_registrant[0]
-      else:
-          resp = Respondant(
-          phone_number=message.connection.identity,
-          registered_at=datetime.now())
-          resp.save()
-          return resp
       
     def handle (self, message):
         """Register the respondant if the number is new."""
-
-        potential_respondant = Respondant.objects.filter(phone_number=message.connection.identity)
-        respondant = self.register(potential_respondant, message)
+        before = datetime.now()
+        respondant = Respondant.register_from_message(message)
         
         current_question = Question.objects.filter(current=1)
 
@@ -41,7 +28,7 @@ class App (rapidsms.app.App):
                 )
                 resp.save()
             
-                if potential_respondant:
+                if respondant.registered_at < before:
                     message.respond("Thanks for your reply! Your free minutes should arrive shortly.")
                 else:
                     message.respond("Thanks for your reply and for registering for Infone. Your free minutes should arrive shortly. Your Infone ID is: %d" % respondant.id)
@@ -49,14 +36,14 @@ class App (rapidsms.app.App):
                 message.respond("We already got your answer to this question earlier, thanks.")
                     
         else:
-            if potential_respondant:
-                message.respond("You're already registered.")
+            if respondant.registered_at < before:
+                message.respond("You're already registered")
             else:
                 message.respond("Thanks for registering! Your Infone ID is: %d" % respondant.id)
         
         # Respondant.objects.all().delete()
-        # Response.objects.all().delete()
-        # Question.objects.all().delete()
+        #         Response.objects.all().delete()
+        #         Question.objects.all().delete()
 
         
         pass
