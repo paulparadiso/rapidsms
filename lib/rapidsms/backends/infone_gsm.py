@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
@@ -12,6 +13,8 @@ from rapidsms.backends import Backend
 import backend
 from rapidsms import log
 from rapidsms import utils
+
+from apps.infone import models
 
 POLL_INTERVAL=2 # num secs to wait between checking for inbound texts
 LOG_LEVEL_MAP = {
@@ -39,10 +42,19 @@ class Backend(Backend):
     def configure(self, *args, **kwargs):
         self.modem = None
         self.modem_args = args
-        # Variable to track new message status
-        # Does nothing right now.
-        self.have_read_messages = False
+
+        # Variable to determine if question is currently going out
+        self.is_polling = False
+
+        # Variable to hold current question
+        self.current_question = None
+
+        # Variable to hold respondent to be polled
+        self.current_respondent = None
         
+        # List of previously polled respondents.  Backwards way of doing things
+        self.respondents = []
+
         # set max outbound text size
         if 'max_csm' in kwargs:
             self.max_csm = int(kwargs['max_csm'])
@@ -76,9 +88,46 @@ class Backend(Backend):
         except ValueError, err:
             # TODO: Pass this error info on to caller!
             self.error('Error sending message: %s' % err)
+
+    def send_question(self, numb, mess):
+        try:
+            self.modem.send_sms(
+                numb,
+                mess,
+                max_messages = self.max_csm)
+        except ValueError, err:
+            self.error('Error sending message: %s' %err)
         
     def run(self):
         while self._running:
+
+            # Check if there is question currently being polled or
+            # if we should start a new one.
+            
+            if self.is_polling:
+                no_more_respondents = True
+                for r in Respondant.objects.all():
+                    number = r.phone_number
+                    for i in self.respondents:
+                        if i == number:
+                            pass
+                        else:
+                            self.send_question(number, self.current_question)
+                            self.respondents.append(number)
+                            no_more_respondents = False
+                if no_more_respondents:
+                    for q in Question.objects.all():
+                        if q.current:
+                            q.current = False
+                    self.respondents = []
+                    self.is_polling = False
+                        
+            else:
+                for q in Question.objects.all():
+                    if q.current:
+                        self.current_question = q.text
+                        self.is_polling == True
+            
             # check for new messages
             msg = self.modem.next_message()
 
