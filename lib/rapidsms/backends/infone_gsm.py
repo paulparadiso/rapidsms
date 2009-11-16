@@ -110,11 +110,12 @@ class Backend(Backend):
                     number = r.phone_number
                     for i in self.respondents:
                         if i == number:
-                            pass
+                            continue
                         else:
                             self.send_question(number, self.current_question)
                             self.respondents.append(number)
                             no_more_respondents = False
+                            break
                 if no_more_respondents:
                     for q in Question.objects.all():
                         if q.current:
