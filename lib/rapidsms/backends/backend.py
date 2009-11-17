@@ -8,6 +8,8 @@ import time
 
 class Backend (Receiver):
     def __init__ (self, router):
+        #TEST
+        print "I am a backend starting"
         Receiver.__init__(self)
         self._router = router
         self._running = False
