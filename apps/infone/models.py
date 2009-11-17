@@ -2,6 +2,7 @@ from django.db import models
 from django.db import connection
 from reporters.models import PersistantConnection, PersistantBackend, Reporter
 from datetime import datetime
+from rapidsms.message import Message
 
 class Respondant(models.Model):
     phone_number  = models.CharField(max_length=20, blank=True, null=True)
@@ -42,6 +43,8 @@ class Question(models.Model):
             q.save()
             
         question.current = True
+        resp = Respondant.objects.all()[0]
+        Message(resp.connection, question.text).send()
         # for respondant in Respondant.objects.all():
             # respondant.connection.backend.message(respondant.phone_number, question.text).send()
 
