@@ -1,0 +1,21 @@
+{% extends base_template %}
+{% block title %}All Respondents{% endblock %}
+{% block content %}
+<h2>All Respondents</h2> 
+<table width="100%"> 
+    <thead>
+        <tr>
+            <th>Phone Number</th>
+            <th>Registered At</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for respondent in respondents %}
+            <tr>
+                <td>{{respondent.phone_number}}</td>
+                <td>{{respondent.registered_at|date:"d-M-Y H:m:s"}}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

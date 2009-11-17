@@ -11,10 +11,10 @@ class QuestionForm(forms.Form):
     text = forms.CharField(max_length=160, widget=forms.widgets.Textarea())
     current = forms.BooleanField(required=False)
 
-def respondants_index(req):
-    template_path = "infone/respondants/index.html"
-    all = Respondant.objects.order_by('registered_at').reverse()
-    return render_to_response(req, template_path, {'respondants' : all})
+def respondents_index(req):
+    template_path = "infone/respondents/index.html"
+    all = Respondent.objects.order_by('registered_at').reverse()
+    return render_to_response(req, template_path, {'respondents' : all})
 
 def app_index(req):
     template_path = "infone/index.html"
@@ -28,10 +28,10 @@ def question_csv(req, id):
     writer = csv.writer(response)
     question = Question.objects.get(id=id)
     responses = question.response_set.all()
-    writer.writerow(['Respondant', 'Response', 'Received At'])
+    writer.writerow(['Respondent', 'Response', 'Received At'])
 
     for r in responses:
-        writer.writerow([r.respondant.phone_number, r.text, r.created_at])
+        writer.writerow([r.respondent.phone_number, r.text, r.created_at])
 
     return response
 

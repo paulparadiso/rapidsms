@@ -3,7 +3,7 @@ from django.db import connection
 from reporters.models import PersistantConnection, PersistantBackend, Reporter
 from datetime import datetime
 
-class Respondant(models.Model):
+class Respondent(models.Model):
     phone_number  = models.CharField(max_length=20, blank=True, null=True)
     registered_at = models.DateTimeField(null=True)
     reporter      = models.ForeignKey(Reporter, null=True, blank=True)
@@ -11,7 +11,7 @@ class Respondant(models.Model):
 
     @classmethod
     def register_from_message(modelBase, message):
-        potential_registrant = Respondant.objects.filter(phone_number=message.connection.identity)
+        potential_registrant = Respondent.objects.filter(phone_number=message.connection.identity)
         if potential_registrant:
             return potential_registrant[0]
         else:
@@ -24,7 +24,7 @@ class Respondant(models.Model):
             conn.save()
             conn.seen()
             
-            resp = Respondant(
+            resp = Respondent(
             phone_number=message.connection.identity,
             registered_at=datetime.now(),
             reporter=reporter,
@@ -42,13 +42,13 @@ class Question(models.Model):
             q.save()
             
         question.current = True
-        # for respondant in Respondant.objects.all():
-            # respondant.connection.backend.message(respondant.phone_number, question.text).send()
+        # for respondent in Respondent.objects.all():
+            # respondent.connection.backend.message(respondent.phone_number, question.text).send()
 
         question.save()
     
-    def not_yet_answered_by(self, respondant):
-        return Response.objects.filter(question=self, respondant=respondant).count() == 0
+    def not_yet_answered_by(self, respondent):
+        return Response.objects.filter(question=self, respondent=respondent).count() == 0
 
     text = models.CharField(max_length=160)
     created_at = models.DateTimeField(null=True)
@@ -56,7 +56,7 @@ class Question(models.Model):
     
 class Response(models.Model):
     question = models.ForeignKey(Question)
-    respondant = models.ForeignKey(Respondant)
+    respondent = models.ForeignKey(Respondent)
     text = models.CharField(max_length=160)
     created_at = models.DateTimeField(null=True)
     
