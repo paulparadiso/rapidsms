@@ -43,8 +43,8 @@ class Question(models.Model):
             q.save()
             
         question.current = True
-        resp = Respondant.objects.all()[0]
-        Message(resp.connection, question.text).send()
+        # resp = Respondant.objects.all()[0]
+        # Message(resp.connection, question.text).send()
         # for respondant in Respondant.objects.all():
             # respondant.connection.backend.message(respondant.phone_number, question.text).send()
 
