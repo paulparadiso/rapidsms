@@ -12,36 +12,36 @@ class App (rapidsms.app.App):
         pass
       
     def handle (self, message):
-        """Register the respondant if the number is new."""
+        """Register the respondent if the number is new."""
         before = datetime.now()
-        respondant = Respondant.register_from_message(message)
+        respondent = Respondent.register_from_message(message)
         
         current_question = Question.objects.filter(current=1)
 
         if current_question:
-            if current_question[0].not_yet_answered_by(respondant):
+            if current_question[0].not_yet_answered_by(respondent):
                 resp = Response(
                 question=current_question[0],
-                respondant=respondant,
+                respondent=respondent,
                 text=message.text,
                 created_at=datetime.now()
                 )
                 resp.save()
             
-                if respondant.registered_at < before:
+                if respondent.registered_at < before:
                     message.respond("Thanks for your reply! Your free minutes should arrive shortly.")
                 else:
-                    message.respond("Thanks for your reply and for registering for Infone. Your free minutes should arrive shortly. Your Infone ID is: %d" % respondant.id)
+                    message.respond("Thanks for your reply and for registering for Infone. Your free minutes should arrive shortly. Your Infone ID is: %d" % respondent.id)
             else:
                 message.respond("We already got your answer to this question earlier, thanks.")
                     
         else:
-            if respondant.registered_at < before:
+            if respondent.registered_at < before:
                 message.respond("You're already registered")
             else:
-                message.respond("Thanks for registering! Your Infone ID is: %d" % respondant.id)
+                message.respond("Thanks for registering! Your Infone ID is: %d" % respondent.id)
         
-        # Respondant.objects.all().delete()
+        # Respondent.objects.all().delete()
         #         Response.objects.all().delete()
         #         Question.objects.all().delete()
 
