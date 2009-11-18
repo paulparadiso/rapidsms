@@ -3,6 +3,7 @@ from django.db import connection
 from reporters.models import PersistantConnection, PersistantBackend, Reporter
 from datetime import datetime
 from rapidsms.message import Message
+#from rapidsms import Router
 
 class Respondent(models.Model):
     phone_number  = models.CharField(max_length=20, blank=True, null=True)
@@ -21,6 +22,9 @@ class Respondent(models.Model):
             
             reporter = Reporter(alias=message.connection.identity, first_name=spl[0], last_name=spl[2])
             reporter.save()
+            
+            be = PersistantBackend.from_message(message)
+            be.save()
             
             conn = PersistantConnection.from_message(message)
             conn.reporter = reporter
@@ -45,6 +49,10 @@ class Question(models.Model):
             q.save()
             
         question.current = True
+        #router = Router()
+        #router.add_backend("http_HttpHandler")
+        #be = router.get_backend("http_HttpHandler")
+        #be.message("5037849133", "blah").send()
         # resp = Respondant.objects.all()[0]
         # Message(resp.connection, question.text).send()
         # for respondant in Respondant.objects.all():

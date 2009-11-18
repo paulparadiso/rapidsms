@@ -13,37 +13,48 @@ class App (rapidsms.app.App):
       
     def handle (self, message):
         """Register the respondent if the number is new."""
-        before = datetime.now()
-        respondent = Respondent.register_from_message(message)
-        
-        current_question = Question.objects.filter(current=1)
-
-        if current_question:
-            if current_question[0].not_yet_answered_by(respondent):
-                resp = Response(
-                question=current_question[0],
-                respondent=respondent,
-                text=message.text,
-                created_at=datetime.now()
-                )
-                resp.save()
+        if message.connection.identity == "5037849133" and message.text == "go":
+            current_question = Question.objects.filter(current=True)
+            if current_question:
+                for respondent in Respondent.objects.all():
+                    be = self.router.get_backend(respondent.connection.backend.slug)
+                    be.message(respondent.phone_number, current_question[0].text).send()
+                message.respond("current question sent out: %s" % current_question[0].text)
+            else:
+                message.respond("No current question")
             
-                if respondent.registered_at < before:
-                    message.respond("Thanks for your reply! Your free minutes should arrive shortly.")
+        else:    
+            before = datetime.now()
+            respondent = Respondent.register_from_message(message)
+            
+            current_question = Question.objects.filter(current=1)
+            
+            if current_question:
+                if current_question[0].not_yet_answered_by(respondent):
+                    resp = Response(
+                    question=current_question[0],
+                    respondent=respondent,
+                    text=message.text,
+                    created_at=datetime.now()
+                    )
+                    resp.save()
+                
+                    if respondent.registered_at < before:
+                        message.respond("Thanks for your reply! Your free minutes should arrive shortly.")
+                    else:
+                        message.respond("Thanks for your reply and for registering for Infone. Your free minutes should arrive shortly. Your Infone ID is: %d" % respondent.id)
                 else:
-                    message.respond("Thanks for your reply and for registering for Infone. Your free minutes should arrive shortly. Your Infone ID is: %d" % respondent.id)
+                    message.respond("We already got your answer to this question earlier, thanks.")
+                        
             else:
-                message.respond("We already got your answer to this question earlier, thanks.")
-                    
-        else:
-            if respondent.registered_at < before:
-                message.respond("You're already registered")
-            else:
-                message.respond("Thanks for registering! Your Infone ID is: %d" % respondent.id)
-        
-        # Respondent.objects.all().delete()
-        #         Response.objects.all().delete()
-        #         Question.objects.all().delete()
+                if respondent.registered_at < before:
+                    message.respond("You're already registered")
+                else:
+                    message.respond("Thanks for registering! Your Infone ID is: %d" % respondent.id)
+            
+            # Respondent.objects.all().delete()
+            #         Response.objects.all().delete()
+            #         Question.objects.all().delete()
 
         
         pass
