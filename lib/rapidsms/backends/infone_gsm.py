@@ -2,7 +2,6 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
-
 import time
 import pygsm
 import Queue
@@ -52,6 +51,9 @@ class Backend(Backend):
         # Variable to hold respondent to be polled
         self.current_respondent = 0
 
+        # Variable to hold respondent list
+        self.respondent_list = []
+
         # set max outbound text size
         if 'max_csm' in kwargs:
             self.max_csm = int(kwargs['max_csm'])
@@ -94,7 +96,10 @@ class Backend(Backend):
                 max_messages = self.max_csm)
         except ValueError, err:
             self.error('Error sending message: %s' %err)
-        
+    
+    def print_gotcha(self):
+        print "GOTCHA"
+    
     def run(self):
         while self._running:
 
