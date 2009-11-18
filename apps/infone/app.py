@@ -42,7 +42,7 @@ class App (rapidsms.app.App):
                     if respondent.registered_at < before:
                         message.respond("Thanks for your reply! Your free minutes should arrive shortly.")
                     else:
-                        message.respond("Thanks for your reply and for registering for Infone. Your free minutes should arrive shortly. Your Infone ID is: %d" % respondent.id)
+                        message.respond("Thanks for your reply and for registering for Infone. Your free minutes should arrive shortly." % respondent.id)
                 else:
                     message.respond("We already got your answer to this question earlier, thanks.")
                         
@@ -50,7 +50,7 @@ class App (rapidsms.app.App):
                 if respondent.registered_at < before:
                     message.respond("You're already registered")
                 else:
-                    message.respond("Thanks for registering! Your Infone ID is: %d" % respondent.id)
+                    message.respond("Thanks for registering, %s. Welcome to Infone!" % respondent.reporter.full_name())
             
             # Respondent.objects.all().delete()
             #         Response.objects.all().delete()
