@@ -18,6 +18,7 @@ class Respondent(models.Model):
             return potential_registrant[0]
         else:
             # have to create a Reporter and PersistentConnection
+            # TODO: 
             spl = message.text.partition(" ")
             
             reporter = Reporter(alias=message.connection.identity, first_name=spl[0], last_name=spl[2])
