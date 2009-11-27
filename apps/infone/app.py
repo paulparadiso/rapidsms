@@ -42,7 +42,7 @@ class App (rapidsms.app.App):
                     if respondent.registered_at < before:
                         message.respond("Thanks for your reply! Your free minutes should arrive shortly.")
                     else:
-                        message.respond("Thanks for your reply and for registering for Infone. Your free minutes should arrive shortly." % respondent.id)
+                        message.respond("Thanks for your reply and for registering for Infone. Your free minutes should arrive shortly. Your Infone ID is: %d" % respondent.id)
                 else:
                     message.respond("We already got your answer to this question earlier, thanks.")
                         

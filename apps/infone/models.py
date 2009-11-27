@@ -18,6 +18,7 @@ class Respondent(models.Model):
             return potential_registrant[0]
         else:
             # have to create a Reporter and PersistentConnection
+            # TODO: 
             spl = message.text.partition(" ")
             
             reporter = Reporter(alias=message.connection.identity, first_name=spl[0], last_name=spl[2])
@@ -74,5 +75,9 @@ class Response(models.Model):
     respondent = models.ForeignKey(Respondent)
     text = models.CharField(max_length=160)
     created_at = models.DateTimeField(null=True)
-    
-    # TODO: parsed_text? or something from method defined in question?
+
+class Target(models.Model):
+    question = models.ForeignKey(Question)
+    respondent = models.ForeignKey(Respondent)
+    response = models.ForeignKey(Response)
+    sent_at = models.DateTimeField(null=True)
