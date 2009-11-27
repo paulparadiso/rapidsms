@@ -13,7 +13,7 @@ class App (rapidsms.app.App):
       
     def handle (self, message):
         """Register the respondent if the number is new."""
-        if message.connection.identity == "5037849133" and message.text == "go":
+        if message.connection.identity == "15037849133" and message.text == "go":
             current_question = Question.objects.filter(current=True)
             if current_question:
                 for respondent in Respondent.objects.all():
