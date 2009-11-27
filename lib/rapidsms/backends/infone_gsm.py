@@ -14,6 +14,7 @@ from rapidsms import log
 from rapidsms import utils
 
 from apps.infone.models import *
+from datetime import datetime
 
 POLL_INTERVAL=2 # num secs to wait between checking for inbound texts
 LOG_LEVEL_MAP = {
@@ -41,18 +42,6 @@ class Backend(Backend):
     def configure(self, *args, **kwargs):
         self.modem = None
         self.modem_args = args
-
-        # Variable to determine if question is currently going out
-        self.is_polling = False
-
-        # Variable to hold current question
-        self.current_question = None
-
-        # Variable to hold respondent to be polled
-        self.current_respondent = 0
-
-        # Variable to hold respondent list
-        self.respondent_list = []
 
         # set max outbound text size
         if 'max_csm' in kwargs:
@@ -97,44 +86,25 @@ class Backend(Backend):
         except ValueError, err:
             self.error('Error sending message: %s' %err)
     
+    #function to check for a waiting message in the targets model and send it
+    def send_next_message(self):
+        t = Target.objects.filter(sent_at = None)[:1]
+        if t:
+            r = Respondent.objects.filter(id=t[0].respondent)[:1]
+            q = Question.objects.filer(id=t[0].question)[:1]
+            send_question(r[0].phone_number,q[0].text)
+            t.sent_at = datetime.now()
+            t.save()            
+        
     def print_gotcha(self):
         print "GOTCHA"
     
     def run(self):
         while self._running:
 
-            # Check if there is question currently being polled or
-            # if we should start a new one.
-            
-            if self.is_polling == True:
-                # This get a list of all respondents and assumes
-                # that they come in the same order each time.
-                r = Respondent.objects.all()
-                if self.current_respondent >= len(r):
-                    # This turns off the question being asked
-                    # Could probably be more elegant.  Like holding
-                    # onto the id of the current question.
-                    for q in Question.objects.all():
-                        if q.current == 1:
-                            q.current = 0
-                            q.save()
-                    self.is_polling = False
-                    self.current_respondent = 0
-                else:
-                    #self.send_question(number, self.current_question)
-                    c = Connection(self,r[self.current_respondent].phone_number)
-                    m = Message(connection=c,
-                                text=self.current_question
-                                )
-                    self.__send_sms(m)
-                    self.current_respondent += 1
-            else:
-                for q in Question.objects.all():
-                    if q.current == 1:
-                        self.current_question = q.text
-                        print "Setting up: " + self.current_question
-                        self.is_polling = True
-            
+            #Check to see if there is a question waiting and send it if it is.
+            self.send_next_message()
+
             # check for new messages
             msg = self.modem.next_message()
 
