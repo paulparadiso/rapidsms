@@ -1,0 +1,9 @@
+{% extends base_template %}
+{% block title %}xtrans config{% endblock %}
+{% block content %}
+<h2>Xtrans Configuration</h2>
+<form action="/xtrans/setconfig" method="POST">
+{{ form.as_p }}
+<input type="submit" value="Submit" />
+</form>
+{% endblock %}
