@@ -7,6 +7,7 @@ import xtrans.views as views
 
 urlpatterns = patterns('',
                        url(r'^xtrans/?$',views.app_index),
-                       url(r'^xtrans/config?$',views.config),
-                       url(r'^xtrans/setconfig?$', views.config_submit)
+                       url(r'^xtrans/config/?$',views.config),
+                       url(r'^xtrans/config/create/?&', views.create_config),
+                       url(r'^xtrans/config/submit/?$', views.create_config),
 )

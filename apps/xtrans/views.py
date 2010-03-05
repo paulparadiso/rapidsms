@@ -1,13 +1,11 @@
+#!/usr/bin/env python
+# vim: ai ts=4 sts=4 et sw=4
 from rapidsms.webui.utils import render_to_response
 from models import *
 from datetime import datetime, timedelta
 from django import forms
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
-
-class ConfigForm(forms.Form):
-    text = forms.CharField(max_length=160, widget=forms.widgets.Textarea())
-    current = forms.BooleanField(required=False)
 
 def config(req):
     template_path = "xtrans/config.html"
@@ -21,3 +19,9 @@ def config_submit(req):
 def app_index(req):
     template_path = "xtrans/index.html"
     return render_to_response(req, template_path, {})
+
+def create_config(req):
+    c = MTurkConfig()
+    f = ConfigForm(instance=c)
+    template_path = "xtrans/mturk_config.html"
+    return render_to_response(req, template_path, {'form':f})
