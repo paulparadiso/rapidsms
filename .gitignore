@@ -6,6 +6,8 @@ core.*
 .project
 .pydevproject
 *.sqlite3
+.dump
+.databases
 *.db
 logs/*
 apps/airtime/fixtures/airtime.json

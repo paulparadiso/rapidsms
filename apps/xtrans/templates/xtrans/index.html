@@ -2,9 +2,15 @@
 {% block title %}XTrans Home{% endblock %}
 {% block content %}
 <h2>Xtrans Home</h2> 
-<ul>
-	<li><a href="/xtrans/config">xtrans config</a></li>
-	<li><a href="/xtrans/config/submit">xtrans new config</a></li>
-	<li><a href="/ajax/xtrans/transmethod">set method</a></li>
-</ul>
+<p>XTrans is currently: {{ status }}, turn it
+  {% if is_on %}
+  <a href="/xtrans/toggle/off">off</a>
+  {% else %}
+  <a href="/xtrans/toggle/on">on</a>
+  {% endif %}
+</p>
+{% if is_on %}
+<p>XTrans is currently using: {{ method }} </p>
+<p>To view it's current configuration click <a href="/xtrans/config/view">here</a>
+{% endif %}
 {% endblock %}
